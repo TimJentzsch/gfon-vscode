@@ -1,0 +1,25 @@
+{
+    "name": "gfon",
+    "displayName": "gfon",
+    "description": "Language support for the GFON (GameFeeder Object Notation) file format.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.50.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+    "contributes": {
+        "languages": [{
+            "id": "gfon",
+            "aliases": ["GFON", "gfon"],
+            "extensions": [".gfon"],
+            "configuration": "./language-configuration.json"
+        }],
+        "grammars": [{
+            "language": "gfon",
+            "scopeName": "source.gfon",
+            "path": "./syntaxes/gfon.tmLanguage.json"
+        }]
+    }
+}
