@@ -3,6 +3,10 @@
     "displayName": "gfon",
     "description": "Language support for the GFON (GameFeeder Object Notation) file format.",
     "version": "0.0.1",
+    "scripts": {
+        "vscode:prepublish": "yarn compile-syntax",
+        "compile-syntax": "npx js-yaml syntaxes/gfon.tmLanguage.yaml > syntaxes/gfon.tmLanguage.json"
+    },
     "engines": {
         "vscode": "^1.50.0"
     },

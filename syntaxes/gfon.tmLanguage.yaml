@@ -1,0 +1,168 @@
+# [PackageDev] target_format: plist, ext: tmLanguage
+name: GFON (GameFeeder Object Notation)
+scopeName: source.gfon
+fileTypes: [gfon]
+foldingStartMarker: >-
+  (?x)       # turn on extended mode
+    ^        # a line beginning with
+    \s*      # some optional space
+    [{\[]    # the start of an object or array
+    (?!      # but not followed by
+      .*     # whatever
+      [}\]]  # and the close of an object or array
+      ,?     # an optional comma
+      \s*    # some optional space
+      $      # at the end of the line
+    )
+    |        # ...or...
+    [{\[]    # the start of an object or array
+    \s*      # some optional space
+    $        # at the end of the line
+foldingStopMarker: >-
+  (?x)     # turn on extended mode
+    ^      # a line beginning with
+    \s*    # some optional space
+    [}\]]  # and the close of an object or array
+keyEquivalent: ^~J
+
+patterns:
+  - include: "#value"
+
+repository:
+  array:
+    name: meta.structure.array.gfon
+    begin: \[
+    beginCaptures:
+      "0": { name: punctuation.definition.array.begin.gfon }
+    end: \]
+    endCaptures:
+      "0": { name: punctuation.definition.array.end.gfon }
+    patterns:
+      - include: "#value"
+      - name: punctuation.separator.array.gfon
+        match: ","
+      - name: invalid.illegal.expected-array-separator.gfon
+        match: '[^\s\]]'
+
+  comments:
+    patterns:
+      - name: comment.block.documentation.gfon
+        begin: /\*\*
+        end: \*/
+        captures:
+          "0": { name: punctuation.definition.comment.gfon }
+      - name: comment.block.gfon
+        begin: /\*
+        end: \*/
+        captures:
+          "0": { name: punctuation.definition.comment.gfon }
+      - name: comment.line.double-slash.js
+        match: (//).*$\n?
+        captures:
+          "1": { name: punctuation.definition.comment.gfon }
+
+  constant:
+    name: constant.language.gfon
+    match: \b(?:true|false|null)\b
+
+  # handles integer and decimal numbers
+  number:
+    name: constant.numeric.gfon
+    match: >-
+      (?x)        # turn on extended mode
+        -?        # an optional minus
+        (?:
+          0       # a zero
+          |       # ...or...
+          [1-9]   # a 1-9 character
+          \d*     # followed by zero or more digits
+        )
+        (?:
+          (?:
+            \.    # a period
+            \d+   # followed by one or more digits
+          )?
+          (?:
+            [eE]  # an e character
+            [+-]? # followed by an option +/-
+            \d+   # followed by one or more digits
+          )?      # make exponent optional
+        )?        # make decimal portion optional
+
+  # a JSON object
+  object:
+    name: meta.structure.dictionary.gfon
+    begin: \{
+    beginCaptures:
+      "0": { name: punctuation.definition.dictionary.begin.gfon }
+    end: \}
+    endCaptures:
+      "0": { name: punctuation.definition.dictionary.end.gfon }
+    patterns:
+      - include: "#key"
+      - include: "#comments"
+      - name: meta.structure.dictionary.value.gfon
+        begin: ":"
+        beginCaptures:
+          "0": { name: punctuation.separator.dictionary.key-value.gfon }
+        end: (,)|(?=\})
+        endCaptures:
+          "1": { name: punctuation.separator.dictionary.pair.gfon }
+        patterns:
+          - include: "#value"
+          - name: invalid.illegal.expected-dictionary-separator.gfon
+            match: '[^\s,]'
+      - name: invalid.illegal.expected-dictionary-separator.gfon
+        match: '[^\s\}]'
+
+  key:
+    name: support.type.property-name.gfon
+    begin: '"'
+    beginCaptures:
+      "0": { name: punctuation.support.type.property-name.begin.gfon }
+    end: '"'
+    endCaptures:
+      "0": { name: punctuation.support.type.property-name.end.gfon }
+    patterns:
+      - name: constant.character.escape.gfon
+        match: >-
+          (?x)                # turn on extended mode
+            \\                # a literal backslash
+            (?:               # ...followed by...
+              ["\\/bfnrt]     # one of these characters
+              |               # ...or...
+              u               # a u
+              [0-9a-fA-F]{4}) # and four hex digits
+      - name: invalid.illegal.unrecognized-string-escape.gfon
+        match: \\.
+
+  string:
+    name: string.quoted.double.gfon
+    begin: '"'
+    beginCaptures:
+      "0": { name: punctuation.definition.string.begin.gfon }
+    end: '"'
+    endCaptures:
+      "0": { name: punctuation.definition.string.end.gfon }
+    patterns:
+      - name: constant.character.escape.gfon
+        match: >-
+          (?x)                # turn on extended mode
+            \\                # a literal backslash
+            (?:               # ...followed by...
+              ["\\/bfnrt]     # one of these characters
+              |               # ...or...
+              u               # a u
+              [0-9a-fA-F]{4}) # and four hex digits
+      - name: invalid.illegal.unrecognized-string-escape.gfon
+        match: \\.
+
+  # the 'value' diagram at http://json.org
+  value:
+    patterns:
+      - include: "#constant"
+      - include: "#number"
+      - include: "#string"
+      - include: "#array"
+      - include: "#object"
+      - include: "#comments"
