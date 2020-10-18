@@ -121,9 +121,65 @@ repository:
       - name: invalid.illegal.expected-dictionary-separator.gfon
         match: '[^\s\}]'
 
+  # Strings, double- or single-quoted
+  string:
+    patterns:
+      - include: "#double-quoted-string"
+      - include: "#single-quoted-string"
+
+  # Double-quoted string, "..."
+  double-quoted-string:
+    name: string.quoted.double.gfon
+    begin: '"'
+    beginCaptures:
+      "0": { name: punctuation.definition.string.begin.gfon }
+    end: '"'
+    endCaptures:
+      "0": { name: punctuation.definition.string.end.gfon }
+    patterns:
+      - name: constant.character.escape.gfon
+        match: >-
+          (?x)                # turn on extended mode
+            \\                # a literal backslash
+            (?:               # ...followed by...
+              ["\\/bfnrt]     # one of these characters
+              |               # ...or...
+              u               # a u
+              [0-9a-fA-F]{4}) # and four hex digits
+      - name: invalid.illegal.unrecognized-string-escape.gfon
+        match: \\.
+
+  # Single-quoted string, '...'
+  single-quoted-string:
+    name: string.quoted.single.gfon
+    begin: "'"
+    beginCaptures:
+      "0": { name: punctuation.definition.string.begin.gfon }
+    end: "'"
+    endCaptures:
+      "0": { name: punctuation.definition.string.end.gfon }
+    patterns:
+      - name: constant.character.escape.gfon
+        match: >-
+          (?x)                # turn on extended mode
+            \\                # a literal backslash
+            (?:               # ...followed by...
+              ['\\/bfnrt]     # one of these characters
+              |               # ...or...
+              u               # a u
+              [0-9a-fA-F]{4}) # and four hex digits
+      - name: invalid.illegal.unrecognized-string-escape.gfon
+        match: \\.
+
   # Object key; Same syntax as strings, but different tokens
   key:
-    name: support.type.property-name.gfon
+    patterns:
+      - include: "#double-quoted-key"
+      - include: "#single-quoted-key"
+
+  # Double quoted object key; Same syntax as strings, but different tokens
+  double-quoted-key:
+    name: support.type.property-name.quoted.double.gfon
     begin: '"'
     beginCaptures:
       "0": { name: punctuation.support.type.property-name.begin.gfon }
@@ -143,22 +199,22 @@ repository:
       - name: invalid.illegal.unrecognized-string-escape.gfon
         match: \\.
 
-  # Strings
-  string:
-    name: string.quoted.double.gfon
-    begin: '"'
+  # Single quoted object key; Same syntax as strings, but different tokens
+  single-quoted-key:
+    name: support.type.property-name.quoted.single.gfon
+    begin: "'"
     beginCaptures:
-      "0": { name: punctuation.definition.string.begin.gfon }
-    end: '"'
+      "0": { name: punctuation.support.type.property-name.begin.gfon }
+    end: "'"
     endCaptures:
-      "0": { name: punctuation.definition.string.end.gfon }
+      "0": { name: punctuation.support.type.property-name.end.gfon }
     patterns:
       - name: constant.character.escape.gfon
         match: >-
           (?x)                # turn on extended mode
             \\                # a literal backslash
             (?:               # ...followed by...
-              ["\\/bfnrt]     # one of these characters
+              ['\\/bfnrt]     # one of these characters
               |               # ...or...
               u               # a u
               [0-9a-fA-F]{4}) # and four hex digits
