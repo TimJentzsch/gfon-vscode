@@ -29,6 +29,7 @@ patterns:
   - include: "#value"
 
 repository:
+  # JSON-like arrays
   array:
     name: meta.structure.array.gfon
     begin: \[
@@ -44,28 +45,33 @@ repository:
       - name: invalid.illegal.expected-array-separator.gfon
         match: '[^\s\]]'
 
+  # Comments
   comments:
     patterns:
+      # Documentation comments, /** ... */
       - name: comment.block.documentation.gfon
         begin: /\*\*
         end: \*/
         captures:
           "0": { name: punctuation.definition.comment.gfon }
+      # Block comments, /* ... */
       - name: comment.block.gfon
         begin: /\*
         end: \*/
         captures:
           "0": { name: punctuation.definition.comment.gfon }
+      # Inline comments, // ...
       - name: comment.line.double-slash.js
         match: (//).*$\n?
         captures:
           "1": { name: punctuation.definition.comment.gfon }
 
+  # Constant values, true, false, null
   constant:
     name: constant.language.gfon
     match: \b(?:true|false|null)\b
 
-  # handles integer and decimal numbers
+  # Numbers, 123, 32.4, etc.
   number:
     name: constant.numeric.gfon
     match: >-
@@ -89,7 +95,7 @@ repository:
           )?      # make exponent optional
         )?        # make decimal portion optional
 
-  # a JSON object
+  # JSON-like objects
   object:
     name: meta.structure.dictionary.gfon
     begin: \{
@@ -115,6 +121,7 @@ repository:
       - name: invalid.illegal.expected-dictionary-separator.gfon
         match: '[^\s\}]'
 
+  # Object key; Same syntax as strings, but different tokens
   key:
     name: support.type.property-name.gfon
     begin: '"'
@@ -136,6 +143,7 @@ repository:
       - name: invalid.illegal.unrecognized-string-escape.gfon
         match: \\.
 
+  # Strings
   string:
     name: string.quoted.double.gfon
     begin: '"'
@@ -157,11 +165,12 @@ repository:
       - name: invalid.illegal.unrecognized-string-escape.gfon
         match: \\.
 
+  # Colors
   color:
     name: constant.other.color.rgb-value.hex.gfon
     match: "#[0-9a-fA-F]{6}"
 
-  # regular expression
+  # Regular expressions
   # regexp syntax is taken from https://github.com/atom/language-javascript/
   regex:
     name: string.regexp.gfon
