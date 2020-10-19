@@ -26,9 +26,18 @@ foldingStopMarker: >-
 keyEquivalent: ^~J
 
 patterns:
+  - include: "#schema"
   - include: "#value"
 
 repository:
+  # Schema definition
+  schema:
+    match: "((#)schema)(:)"
+    captures:
+      "1": { name: keyword.control.directive.include.gfon }
+      "2": { name: punctuation.definition.directive.gfon }
+      "3": { name: punctuation.separator.dictionary.key-value.gfon }
+
   # JSON-like arrays
   array:
     name: meta.structure.array.gfon
@@ -236,7 +245,6 @@ repository:
       "3": { name: punctuation.separator.time.gfon }
       "4": { name: punctuation.separator.time.gfon }
       "5": { name: punctuation.separator.time.gfon }
-
 
   # Regular expressions
   # regexp syntax is taken from https://github.com/atom/language-javascript/
