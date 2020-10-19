@@ -226,6 +226,18 @@ repository:
     name: constant.other.color.rgb-value.hex.gfon
     match: "#[0-9a-fA-F]{6}"
 
+  # Timestamps
+  time:
+    name: constant.other.time.gfon
+    match: (@)\d{4}(?:(-)\d\d(?:(-)\d\d(?:(T)\d\d(:)\d\d(?:\d\d)?(?:\.\d+)?(?:(?:[+-]\d\d(:)\d\d)|Z)?)?)?)?
+    captures:
+      "1": { name: punctuation.definition.time.begin.gfon }
+      "2": { name: punctuation.separator.time.gfon }
+      "3": { name: punctuation.separator.time.gfon }
+      "4": { name: punctuation.separator.time.gfon }
+      "5": { name: punctuation.separator.time.gfon }
+
+
   # Regular expressions
   # regexp syntax is taken from https://github.com/atom/language-javascript/
   regex:
@@ -313,6 +325,7 @@ repository:
   value:
     patterns:
       - include: "#constant"
+      - include: "#time"
       - include: "#number"
       - include: "#color"
       - include: "#string"
