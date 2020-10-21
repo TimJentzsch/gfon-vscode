@@ -82,10 +82,122 @@ repository:
 
   # Numbers, 123, 32.4, etc.
   number:
-    name: constant.numeric.gfon
+    patterns:
+      - include: "#float"
+      - include: "#integer"
+    
+
+  # An integer value
+  integer:
+    patterns:
+      - include: "#hex"
+      - include: "#octal"
+      - include: "#binary"
+      - include: "#decimal"
+
+  # A decimal integer, 3123, 52
+  decimal:
+    name: constant.numeric.decimal.integer.gfon
     match: >-
       (?x)        # turn on extended mode
-        -?        # an optional minus
+        [-+]?     # an optional minus or plus
+        (?:
+          0       # a zero
+          |       # ...or...
+          [1-9]   # a non-zero digit
+          (?:
+            _*    # followed by optional separators...
+            \d    # ...and a digit...
+          )*      # ...zero or more times    
+        )
+
+  # A hex integer, 0x131313, 0xFA13A
+  hex:
+    name: constant.numeric.hex.gfon
+    match: >-
+      (?x)                # turn on extended mode
+        [-+]?             # an optional minus or plus
+        0x                # the hex prefix
+        (?:
+          0               # a zero
+          |               # ...or...
+          [1-9a-fA-F]     # a non-zero hex digit
+          (?:
+            _*            # followed by optional separators...
+            [0-9a-fA-F]   # ...and a hex digit...
+          )*              # ...zero or more times
+        )
+
+  # An octal integer, 0o14728
+  octal:
+    name: constant.numeric.oct.gfon
+    match: >-
+      (?x)          # turn on extended mode
+        [-+]?       # an optional minus or plus
+        0o          # the octal prefix
+        (?:
+          0         # a zero
+          |         # ...or...
+          [1-7]     # a non-zero octal digit
+          (?:
+            _*      # followed by optional separators...       
+            [0-7]   # ...and an octal digit...
+          )*        # ...zero or more times
+        )
+
+  # A binary integer
+  binary:
+    name: constant.numeric.bin.gfon
+    match: >-
+      (?x)        # turn on extended mode
+        [-+]?     # an optional minus or plus
+        0b        # the binary prefix
+        (?:
+          0       # a zero
+        |         # ...or...
+          1       # a non-zero binary digit
+          (?:
+            _*    # followed by optional separators...
+            [01]  # ...and a binary digit...
+          )*      # ...zero or more times
+        )
+
+  # A floating point number
+  float:
+    patterns:
+      - include: "#float-post"
+      - include: "#float-pre"
+
+  # A floating point number with required decimal part
+  float-post:
+    name: constant.numeric.decimal.float.gfon
+    match: >-
+      (?x)        # turn on extended mode
+        [-+]?     # an optional minus or plus
+        (?:
+          0       # a zero
+          |       # ...or...
+          [1-9]   # a 1-9 character
+          \d*     # followed by zero or more digits
+        )?        # make this part optional
+        (?:
+          \.      # a period
+          \d+     # followed by zero or more digits
+        )
+        (?:
+          (?:
+            [eE]  # an e character
+            [+-]? # followed by an optional +/-
+            \d+   # followed by one or more digits
+          )?      # make exponent optional
+        )
+
+  # A floating point number with required part before the decimal
+  float-pre:
+    name: constant.numeric.decimal.float.gfon
+    match: >-
+      (?x)        # turn on extended mode
+        [-+]?     # an optional minus or plus
         (?:
           0       # a zero
           |       # ...or...
@@ -93,16 +205,15 @@ repository:
           \d*     # followed by zero or more digits
         )
         (?:
-          (?:
-            \.    # a period
-            \d+   # followed by one or more digits
-          )?
-          (?:
-            [eE]  # an e character
-            [+-]? # followed by an option +/-
-            \d+   # followed by one or more digits
-          )?      # make exponent optional
-        )?        # make decimal portion optional
+          \.      # a period
+          \d*     # followed by zero or more digits
+        )
+        (?:
+          [eE]  # an e character
+          [+-]? # followed by an optional +/-
+          \d+   # followed by one or more digits
+        )?      # make exponent optional
+        
 
   # JSON-like objects
   object:
